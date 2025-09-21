@@ -1,1 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Engine Masternode</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Tailwind Configuration */
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #fb923c 0%, #facc15 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Scrollbar styling */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        
+        /* Animation for logs */
+        .log-entry {
+            animation: slideInLeft 0.3s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Pulsing animation for running indicator */
+        .pulse-green {
+            animation: pulseGreen 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulseGreen {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+        
+        /* Toast notification styles */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #1e293b;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease-out;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        /* Button hover effects */
+        .btn-hover:hover {
+            transform: translateY(-1px);
+            transition: transform 0.2s ease;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <div class="container mx-auto max-w-6xl p-4 space-y-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <svg class="h-8 w-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"></path>
+                </svg>
+                <h1 class="text-3xl font-bold gradient-text">
+                    Log Engine Masternode
+                </h1>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span id="statusBadge" class="px-3 py-1 rounded-md bg-green-600 text-white text-sm font-medium pulse-green">
+                    Engine Running
+                </span>
+                <button id="toggleButton" class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium btn-hover">
+                    <svg class="h-4 w-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                    Stop Engine
+                </button>
+            </div>
+        </div>
 
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 text-center">
+                <div id="totalLogs" class="text-2xl font-bold text-white">0</div>
+                <div class="text-sm text-slate-400">Total Logs</div>
+            </div>
+            <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 text-center">
+                <div id="infoCount" class="text-2xl font-bold text-blue-400">0</div>
+                <div class="text-sm text-slate-400">Info</div>
+            </div>
+            <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 text-center">
+                <div id="successCount" class="text-2xl font-bold text-green-400">0</div>
+                <div class="text-sm text-slate-400">Success</div>
+            </div>
+            <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 text-center">
+                <div id="warningCount" class="text-2xl font-bold text-yellow-400">0</div>
+                <div class="text-sm text-slate-400">Warning</div>
+            </div>
+            <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 text-center">
+                <div id="errorCount" class="text-2xl font-bold text-red-400">0</div>
+                <div class="text-sm text-slate-400">Error</div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+                </svg>
+                <span class="text-sm text-slate-400">Filter:</span>
+                <select id="filterSelect" class="bg-slate-800 border border-slate-700 rounded px-3 py-1 text-white text-sm">
+                    <option value="all">Semua Level</option>
+                    <option value="info">Info</option>
+                    <option value="success">Success</option>
+                    <option value="warning">Warning</option>
+                    <option value="error">Error</option>
+                </select>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="clearButton" class="px-4 py-2 border border-slate-600 text-white rounded-lg hover:bg-slate-700 btn-hover">
+                    <svg class="h-4 w-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                    Clear
+                </button>
+                <button id="copyButton" class="px-4 py-2 border border-slate-600 text-white rounded-lg hover:bg-slate-700 btn-hover">
+                    <svg class="h-4 w-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy
+                </button>
+                <button id="exportButton" class="px-4 py-2 border border-slate-600 text-white rounded-lg hover:bg-slate-700 btn-hover">
+                    <svg class="h-4 w-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"></path>
+                    </svg>
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Log Display -->
+        <div class="bg-slate-800/50 border border-slate-700 rounded-lg">
+            <div class="p-6 border-b border-slate-700">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <svg class="h-5 w-5 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12,6 12,12 16,14"></polyline>
+                        </svg>
+                        <h3 class="text-white font-medium">Live Log Output</h3>
+                    </div>
+                    <div id="logCounter" class="text-sm text-slate-400">
+                        0 / 0 entries
+                    </div>
+                </div>
+            </div>
+            <div class="p-6">
+                <div id="logContainer" class="custom-scrollbar overflow-y-auto space-y-1 font-mono text-sm" style="height: 500px;">
+                    <!-- Logs will be inserted here -->
+                    <div id="emptyState" class="text-slate-400 text-center py-12">
+                        <svg class="h-8 w-8 mx-auto animate-spin mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12,6 12,12 16,14"></polyline>
+                        </svg>
+                        <div>Menunggu log engine masternode...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let logs = [];
+        let isRunning = true;
+        let logInterval;
+        let currentFilter = 'all';
+
+        // Mock log messages
+        const logMessages = {
+            info: [
+                'Masternode engine berhasil diinisialisasi',
+                'Koneksi ke network blockchain established',
+                'Sinkronisasi dengan blockchain network',
+                'Masternode terdaftar di network',
+                'Monitoring status masternode: Active',
+                'Engine masternode berjalan stabil',
+                'Validasi blok blockchain berhasil',
+                'Network connection stable: 12ms latency',
+                'Masternode rewards system aktif'
+            ],
+            success: [
+                'Masternode reward diterima: 0.00234 BTC',
+                'Blok validasi berhasil - reward earned',
+                'Transaction validation completed',
+                'Masternode payment confirmed',
+                'Block solution validated successfully',
+                'Network consensus achieved',
+                'Masternode tier upgrade completed',
+                'Governance vote submitted successfully'
+            ],
+            warning: [
+                'Network latency tinggi: 180ms',
+                'Masternode connection unstable',
+                'Block validation time exceeded',
+                'Low connection peers: 4 connected',
+                'Masternode payment delayed',
+                'Network difficulty adjustment',
+                'Blockchain sync behind: 2 blocks'
+            ],
+            error: [
+                'Masternode connection lost - reconnecting...',
+                'Block validation failed: Invalid signature',
+                'Network error: Connection timeout',
+                'Masternode payment error: Insufficient funds',
+                'Blockchain sync error: Chain reorganization',
+                'Engine masternode error: Process timeout'
+            ]
+        };
+
+        // Generate random log
+        function generateLog() {
+            const types = ['info', 'success', 'warning', 'error'];
+            const weights = [50, 25, 20, 5]; // Higher chance for info, lower for error
+            
+            let randomNum = Math.random() * 100;
+            let selectedType = 'info';
+            let cumulative = 0;
+            
+            for (let i = 0; i < types.length; i++) {
+                cumulative += weights[i];
+                if (randomNum <= cumulative) {
+                    selectedType = types[i];
+                    break;
+                }
+            }
+            
+            const messages = logMessages[selectedType];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            const timestamp = new Date().toLocaleTimeString('id-ID', { hour12: false });
+            
+            return {
+                id: Date.now() + Math.random(),
+                timestamp,
+                type: selectedType,
+                level: selectedType.toUpperCase(),
+                message: randomMessage
+            };
+        }
+
+        // Add new log
+        function addLog() {
+            if (!isRunning) return;
+            
+            const newLog = generateLog();
+            logs.unshift(newLog);
+            
+            // Keep only last 100 logs
+            if (logs.length > 100) {
+                logs = logs.slice(0, 100);
+            }
+            
+            updateUI();
+        }
+
+        // Update UI
+        function updateUI() {
+            updateStats();
+            updateLogDisplay();
+            updateLogCounter();
+        }
+
+        // Update statistics
+        function updateStats() {
+            const stats = logs.reduce((acc, log) => {
+                acc[log.type] = (acc[log.type] || 0) + 1;
+                return acc;
+            }, {});
+
+            document.getElementById('totalLogs').textContent = logs.length;
+            document.getElementById('infoCount').textContent = stats.info || 0;
+            document.getElementById('successCount').textContent = stats.success || 0;
+            document.getElementById('warningCount').textContent = stats.warning || 0;
+            document.getElementById('errorCount').textContent = stats.error || 0;
+        }
+
+        // Update log display
+        function updateLogDisplay() {
+            const container = document.getElementById('logContainer');
+            const emptyState = document.getElementById('emptyState');
+            const filteredLogs = getFilteredLogs();
+            
+            if (filteredLogs.length === 0) {
+                if (logs.length === 0) {
+                    emptyState.innerHTML = isRunning ? 
+                        `<svg class="h-8 w-8 mx-auto animate-spin mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12,6 12,12 16,14"></polyline>
+                        </svg>
+                        <div>Menunggu log engine masternode...</div>` :
+                        `<svg class="h-8 w-8 mx-auto text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"></path>
+                        </svg>
+                        <div>Engine masternode dihentikan.</div>
+                        <div class="text-sm">Klik "Start Engine" untuk memulai monitoring log.</div>`;
+                } else {
+                    emptyState.innerHTML = `<svg class="h-8 w-8 mx-auto text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+                    </svg>
+                    <div>Tidak ada log yang sesuai dengan filter "${currentFilter}"</div>`;
+                }
+                emptyState.style.display = 'block';
+                container.innerHTML = '';
+                container.appendChild(emptyState);
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            const logsHTML = filteredLogs.map(log => `
+                <div class="log-entry p-3 rounded-lg border-l-4 transition-all hover:bg-opacity-80 ${getLogStyle(log.type)}" data-log-id="${log.id}">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-slate-400 text-xs">[${log.timestamp}]</span>
+                            <span class="px-2 py-1 border rounded text-xs ${getBadgeStyle(log.type)}">
+                                ${log.level}
+                            </span>
+                        </div>
+                        <button onclick="copyLogEntry('${log.id}')" class="h-6 w-6 p-0 text-slate-500 hover:text-slate-300 rounded">
+                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="mt-1 ml-1">
+                        <span class="text-slate-200">${log.message}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = logsHTML;
+        }
+
+        // Get log styling classes
+        function getLogStyle(type) {
+            const styles = {
+                info: 'bg-blue-900/20 text-blue-300 border-blue-400',
+                success: 'bg-green-900/20 text-green-300 border-green-400',
+                warning: 'bg-yellow-900/20 text-yellow-300 border-yellow-400',
+                error: 'bg-red-900/20 text-red-300 border-red-400'
+            };
+            return styles[type] || styles.info;
+        }
+
+        // Get badge styling classes
+        function getBadgeStyle(type) {
+            const styles = {
+                info: 'border-blue-400 text-blue-300',
+                success: 'border-green-400 text-green-300',
+                warning: 'border-yellow-400 text-yellow-300',
+                error: 'border-red-400 text-red-300'
+            };
+            return styles[type] || styles.info;
+        }
+
+        // Get filtered logs
+        function getFilteredLogs() {
+            return currentFilter === 'all' ? logs : logs.filter(log => log.type === currentFilter);
+        }
+
+        // Update log counter
+        function updateLogCounter() {
+            const filteredCount = getFilteredLogs().length;
+            document.getElementById('logCounter').textContent = `${filteredCount} / ${logs.length} entries`;
+        }
+
+        // Toggle engine
+        function toggleEngine() {
+            isRunning = !isRunning;
+            const toggleBtn = document.getElementById('toggleButton');
+            const statusBadge = document.getElementById('statusBadge');
+            
+            if (isRunning) {
+                toggleBtn.innerHTML = `<svg class="h-4 w-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <rect x="6" y="4" width="4" height="16"></rect>
+                    <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+                Stop Engine`;
+                toggleBtn.className = 'px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium btn-hover';
+                statusBadge.textContent = 'Engine Running';
+                statusBadge.className = 'px-3 py-1 rounded-md bg-green-600 text-white text-sm font-medium pulse-green';
+                startLogGeneration();
+                showToast('Engine Masternode Dimulai', 'Log engine dimulai dan monitoring aktif');
+            } else {
+                toggleBtn.innerHTML = `<svg class="h-4 w-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Start Engine`;
+                toggleBtn.className = 'px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium btn-hover';
+                statusBadge.textContent = 'Engine Stopped';
+                statusBadge.className = 'px-3 py-1 rounded-md bg-gray-600 text-white text-sm font-medium';
+                stopLogGeneration();
+                showToast('Engine Masternode Dihentikan', 'Log engine telah dihentikan');
+            }
+            
+            updateLogDisplay();
+        }
+
+        // Start log generation
+        function startLogGeneration() {
+            if (logInterval) clearInterval(logInterval);
+            logInterval = setInterval(addLog, 1500);
+        }
+
+        // Stop log generation
+        function stopLogGeneration() {
+            if (logInterval) {
+                clearInterval(logInterval);
+                logInterval = null;
+            }
+        }
+
+        // Copy single log entry
+        function copyLogEntry(logId) {
+            const log = logs.find(l => l.id == logId);
+            if (log) {
+                const logText = `[${log.timestamp}] ${log.level}: ${log.message}`;
+                navigator.clipboard.writeText(logText).then(() => {
+                    showToast('Log Entry Disalin', 'Log entry berhasil disalin ke clipboard');
+                });
+            }
+        }
+
+        // Copy all logs
+        function copyAllLogs() {
+            const filteredLogs = getFilteredLogs();
+            const logText = filteredLogs.map(log => 
+                `[${log.timestamp}] ${log.level}: ${log.message}`
+            ).join('\
+');
+            
+            navigator.clipboard.writeText(logText).then(() => {
+                showToast('Log Berhasil Disalin', `${filteredLogs.length} log entries telah disalin ke clipboard`);
+            });
+        }
+
+        // Export logs
+        function exportLogs() {
+            const filteredLogs = getFilteredLogs();
+            const logText = filteredLogs.map(log => 
+                `[${log.timestamp}] ${log.level}: ${log.message}`
+            ).join('\
+');
+            
+            const blob = new Blob([logText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `masternode_logs_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Log Berhasil Diekspor', `${filteredLogs.length} log entries telah diekspor ke file`);
+        }
+
+        // Clear logs
+        function clearLogs() {
+            logs = [];
+            updateUI();
+            showToast('Log Dibersihkan', 'Semua log telah dihapus dari tampilan');
+        }
+
+        // Show toast notification
+        function showToast(title, message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <div class="font-medium">${title}</div>
+                <div class="text-sm text-slate-300 mt-1">${message}</div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Handle filter change
+        function handleFilterChange(e) {
+            currentFilter = e.target.value;
+            updateUI();
+        }
+
+        // Initialize app
+        function init() {
+            // Event listeners
+            document.getElementById('toggleButton').addEventListener('click', toggleEngine);
+            document.getElementById('copyButton').addEventListener('click', copyAllLogs);
+            document.getElementById('exportButton').addEventListener('click', exportLogs);
+            document.getElementById('clearButton').addEventListener('click', clearLogs);
+            document.getElementById('filterSelect').addEventListener('change', handleFilterChange);
+            
+            // Start log generation
+            startLogGeneration();
+            updateUI();
+        }
+
+        // Start app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
