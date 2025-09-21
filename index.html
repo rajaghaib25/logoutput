@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log Engine Masternode - Elite Edition</title>
+    <title>Log Engine Masternode - Clean Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Elite Fonts */
+        /* Clean Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
         
         * {
@@ -20,17 +20,17 @@
             overflow-x: hidden;
         }
         
-        /* Sophisticated Background */
-        .elite-bg {
+        /* Clean Background - No Blinking */
+        .clean-bg {
             background: linear-gradient(135deg, #0f1419 0%, #1a202c 25%, #2d3748 50%, #1a202c 75%, #0f1419 100%);
             background-size: 300% 300%;
-            animation: gentleShift 20s ease infinite;
+            animation: veryGentleShift 30s ease infinite;
             min-height: 100vh;
             color: white;
             position: relative;
         }
         
-        .elite-bg::before {
+        .clean-bg::before {
             content: '';
             position: absolute;
             top: 0;
@@ -38,18 +38,18 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 25% 75%, rgba(99, 102, 241, 0.08) 0%, transparent 60%),
-                radial-gradient(circle at 75% 25%, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+                radial-gradient(circle at 25% 75%, rgba(99, 102, 241, 0.05) 0%, transparent 60%),
+                radial-gradient(circle at 75% 25%, rgba(139, 92, 246, 0.05) 0%, transparent 60%);
             pointer-events: none;
         }
         
-        @keyframes gentleShift {
+        @keyframes veryGentleShift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
         
-        /* Elite Gradient Text */
-        .elite-text {
+        /* Clean Gradient Text */
+        .clean-text {
             background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -58,8 +58,8 @@
             font-weight: 800;
         }
         
-        /* Elite Cards with Smooth Running Border */
-        .elite-card {
+        /* Clean Cards with Smooth Running Border - No Blinking */
+        .clean-card {
             background: rgba(30, 41, 59, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -75,7 +75,7 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
         
-        .elite-card::before {
+        .clean-card::before {
             content: '';
             position: absolute;
             top: -1px;
@@ -92,11 +92,11 @@
             border-radius: 16px;
             opacity: 0;
             transition: opacity 0.6s ease;
-            animation: smoothBorderMove 4s linear infinite;
+            animation: smoothBorderMove 6s linear infinite;
             z-index: -1;
         }
         
-        .elite-card:hover::before {
+        .clean-card:hover::before {
             opacity: 1;
         }
         
@@ -105,7 +105,7 @@
             100% { transform: translateX(100%); }
         }
         
-        .elite-card:hover {
+        .clean-card:hover {
             transform: translateY(-3px) scale(1.01);
             box-shadow: 
                 0 8px 30px rgba(0, 0, 0, 0.3),
@@ -114,7 +114,7 @@
             border-color: rgba(99, 102, 241, 0.4);
         }
         
-        /* Elegant Stat Cards */
+        /* Clean Stat Cards - No Blinking */
         .stat-card {
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(15px);
@@ -170,8 +170,8 @@
             transform: scale(1.08);
         }
         
-        /* Elite Buttons */
-        .elite-btn {
+        /* Clean Buttons */
+        .clean-btn {
             padding: 12px 24px;
             border-radius: 10px;
             border: none;
@@ -184,7 +184,7 @@
             backdrop-filter: blur(10px);
         }
         
-        .elite-btn::before {
+        .clean-btn::before {
             content: '';
             position: absolute;
             top: 0;
@@ -195,7 +195,7 @@
             transition: left 0.6s ease;
         }
         
-        .elite-btn:hover::before {
+        .clean-btn:hover::before {
             left: 100%;
         }
         
@@ -234,8 +234,8 @@
             box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
         }
         
-        /* Elite Badge */
-        .elite-badge {
+        /* Clean Badge - No Blinking */
+        .clean-badge {
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 12px;
@@ -254,14 +254,14 @@
             color: #cbd5e1;
         }
         
-        .badge-premium {
+        .badge-clean {
             background: linear-gradient(135deg, #8b5cf6, #6366f1);
             color: white;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         
-        /* Log Container */
+        /* Log Container - Clean */
         .log-container {
             background: rgba(15, 23, 42, 0.9);
             backdrop-filter: blur(25px);
@@ -271,25 +271,10 @@
             position: relative;
         }
         
-        .log-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.6), transparent);
-            animation: gentleScan 6s linear infinite;
-        }
+        /* Removed scan line animation to prevent blinking */
         
-        @keyframes gentleScan {
-            0%, 10% { transform: translateX(-100%); opacity: 0; }
-            50% { opacity: 1; }
-            90%, 100% { transform: translateX(100%); opacity: 0; }
-        }
-        
-        /* Elite Log Entries */
-        .elite-log-entry {
+        /* Clean Log Entries */
+        .clean-log-entry {
             padding: 16px 20px;
             margin-bottom: 6px;
             border-radius: 10px;
@@ -313,7 +298,7 @@
             }
         }
         
-        .elite-log-entry:hover {
+        .clean-log-entry:hover {
             transform: translateX(6px) scale(1.005);
             box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
         }
@@ -342,28 +327,28 @@
             color: #fca5a5;
         }
         
-        /* Elite Scrollbar */
-        .elite-scrollbar::-webkit-scrollbar {
+        /* Clean Scrollbar */
+        .clean-scrollbar::-webkit-scrollbar {
             width: 8px;
         }
         
-        .elite-scrollbar::-webkit-scrollbar-track {
+        .clean-scrollbar::-webkit-scrollbar-track {
             background: rgba(30, 41, 59, 0.3);
             border-radius: 4px;
         }
         
-        .elite-scrollbar::-webkit-scrollbar-thumb {
+        .clean-scrollbar::-webkit-scrollbar-thumb {
             background: linear-gradient(180deg, #6366f1, #8b5cf6);
             border-radius: 4px;
             transition: background 0.3s ease;
         }
         
-        .elite-scrollbar::-webkit-scrollbar-thumb:hover {
+        .clean-scrollbar::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(180deg, #8b5cf6, #6366f1);
         }
         
-        /* Elite Select */
-        .elite-select {
+        /* Clean Select */
+        .clean-select {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(71, 85, 105, 0.4);
             border-radius: 8px;
@@ -374,14 +359,14 @@
             transition: all 0.3s ease;
         }
         
-        .elite-select:focus {
+        .clean-select:focus {
             outline: none;
             border-color: #6366f1;
             box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
         }
         
-        /* Elite Toast */
-        .elite-toast {
+        /* Clean Toast */
+        .clean-toast {
             position: fixed;
             top: 20px;
             right: 20px;
@@ -400,41 +385,11 @@
             max-width: 320px;
         }
         
-        .elite-toast.show {
+        .clean-toast.show {
             transform: translateX(0);
         }
         
-        /* Loading Indicator - Subtle */
-        .loading-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .loading-dot {
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            background: #10b981;
-            animation: gentlePulse 1.8s ease infinite;
-        }
-        
-        .loading-dot:nth-child(1) { animation-delay: 0s; }
-        .loading-dot:nth-child(2) { animation-delay: 0.3s; }
-        .loading-dot:nth-child(3) { animation-delay: 0.6s; }
-        
-        @keyframes gentlePulse {
-            0%, 80%, 100% { 
-                opacity: 0.3;
-                transform: scale(1);
-            }
-            40% { 
-                opacity: 1;
-                transform: scale(1.1);
-            }
-        }
-        
-        /* Status Indicator */
+        /* Static Status Indicator - No Blinking */
         .status-indicator {
             width: 8px;
             height: 8px;
@@ -442,7 +397,18 @@
             background: #10b981;
             display: inline-block;
             margin-right: 8px;
-            opacity: 0.8;
+            /* Removed all blinking animations */
+        }
+        
+        .status-indicator.inactive {
+            background: #64748b;
+        }
+        
+        /* Simple Loading Indicator - No Blinking */
+        .loading-text {
+            display: inline-block;
+            color: #10b981;
+            font-weight: 500;
         }
         
         /* Responsive Design */
@@ -456,7 +422,7 @@
                 padding: 0.5rem;
             }
             
-            .elite-card {
+            .clean-card {
                 padding: 1rem;
             }
             
@@ -501,10 +467,10 @@
     </style>
 </head>
 <body>
-    <div class="elite-bg">
+    <div class="clean-bg">
         <div class="container space-y-6">
-            <!-- Elite Header -->
-            <div class="flex items-center justify-between elite-card">
+            <!-- Clean Header -->
+            <div class="flex items-center justify-between clean-card">
                 <div class="flex items-center space-x-3">
                     <div class="relative">
                         <svg class="h-10 w-10 text-blue-400" width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -512,19 +478,19 @@
                         </svg>
                         <div class="absolute -top-1 -right-1 status-indicator"></div>
                     </div>
-                    <h1 class="text-4xl font-bold elite-text">
+                    <h1 class="text-4xl font-bold clean-text">
                         Log Engine Masternode
                     </h1>
-                    <span class="elite-badge badge-premium text-xs">
-                        ELITE
+                    <span class="clean-badge badge-clean text-xs">
+                        CLEAN
                     </span>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <span id="statusBadge" class="elite-badge badge-success">
+                    <span id="statusBadge" class="clean-badge badge-success">
                         <span class="status-indicator"></span>
                         Engine Running
                     </span>
-                    <button id="toggleButton" class="elite-btn btn-danger">
+                    <button id="toggleButton" class="clean-btn btn-danger">
                         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: inline; margin-right: 6px;">
                             <rect x="6" y="4" width="4" height="16"></rect>
                             <rect x="14" y="4" width="4" height="16"></rect>
@@ -534,7 +500,7 @@
                 </div>
             </div>
 
-            <!-- Elite Stats Cards -->
+            <!-- Clean Stats Cards -->
             <div class="grid grid-5">
                 <div class="stat-card">
                     <div id="totalLogs" class="stat-number text-white">0</div>
@@ -558,8 +524,8 @@
                 </div>
             </div>
 
-            <!-- Elite Controls -->
-            <div class="flex items-center justify-between elite-card">
+            <!-- Clean Controls -->
+            <div class="flex items-center justify-between clean-card">
                 <div class="flex items-center space-x-3">
                     <div class="flex items-center space-x-2">
                         <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-slate-400">
@@ -567,7 +533,7 @@
                         </svg>
                         <span class="text-sm text-slate-400">Filter:</span>
                     </div>
-                    <select id="filterSelect" class="elite-select">
+                    <select id="filterSelect" class="clean-select">
                         <option value="all">Semua Level</option>
                         <option value="info">Info</option>
                         <option value="success">Success</option>
@@ -576,21 +542,21 @@
                     </select>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button id="clearButton" class="elite-btn btn-outline">
+                    <button id="clearButton" class="clean-btn btn-outline">
                         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: inline; margin-right: 6px;">
                             <polyline points="1 4 1 10 7 10"></polyline>
                             <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
                         </svg>
                         Clear
                     </button>
-                    <button id="copyButton" class="elite-btn btn-outline">
+                    <button id="copyButton" class="clean-btn btn-outline">
                         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: inline; margin-right: 6px;">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
                         Copy
                     </button>
-                    <button id="exportButton" class="elite-btn btn-outline">
+                    <button id="exportButton" class="clean-btn btn-outline">
                         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: inline; margin-right: 6px;">
                             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"></path>
                         </svg>
@@ -599,7 +565,7 @@
                 </div>
             </div>
 
-            <!-- Elite Log Display -->
+            <!-- Clean Log Display -->
             <div class="log-container">
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-4">
@@ -609,7 +575,7 @@
                                 <polyline points="12,6 12,12 16,14"></polyline>
                             </svg>
                             <h3 class="text-xl font-bold text-white">Live Log Output</h3>
-                            <div class="elite-badge" style="background: linear-gradient(135deg, #10b981, #06b6d4); color: white;">
+                            <div class="clean-badge" style="background: linear-gradient(135deg, #10b981, #06b6d4); color: white;">
                                 REAL-TIME
                             </div>
                         </div>
@@ -618,13 +584,8 @@
                         </div>
                     </div>
                     
-                    <div id="logContainer" class="elite-scrollbar space-y-1" style="height: 500px; overflow-y: auto;">
+                    <div id="logContainer" class="clean-scrollbar space-y-1" style="height: 500px; overflow-y: auto;">
                         <div id="emptyState" class="text-slate-400 text-center py-12">
-                            <div class="loading-indicator mb-4" style="justify-content: center;">
-                                <div class="loading-dot"></div>
-                                <div class="loading-dot"></div>
-                                <div class="loading-dot"></div>
-                            </div>
                             <div class="text-lg">Menunggu log engine masternode...</div>
                             <div class="text-sm text-slate-500 mt-2">Engine sedang memproses data secara real-time</div>
                         </div>
@@ -661,7 +622,8 @@
                     'Memory usage optimized: 32% reduction',
                     'CPU utilization normalized: 18%',
                     'Database synchronization completed',
-                    'API endpoints responding normally'
+                    'API endpoints responding normally',
+                    'Transaction pool updated successfully'
                 ],
                 success: [
                     'Masternode reward diterima: 0.00234 BTC',
@@ -677,7 +639,8 @@
                     'Network contribution verified',
                     'Performance bonus unlocked',
                     'Smart contract execution successful',
-                    'Cross-chain bridge transaction completed'
+                    'Cross-chain bridge transaction completed',
+                    'Block mining reward distributed'
                 ],
                 warning: [
                     'Network latency tinggi: 245ms',
@@ -691,7 +654,8 @@
                     'Disk space running low: 18% remaining',
                     'SSL certificate expires in 14 days',
                     'High transaction volume detected',
-                    'Network congestion warning'
+                    'Network congestion warning',
+                    'Database optimization required'
                 ],
                 error: [
                     'Masternode connection lost - reconnecting...',
@@ -704,11 +668,12 @@
                     'API rate limit exceeded',
                     'SSL handshake failed',
                     'Memory allocation error',
-                    'Disk I/O error detected'
+                    'Disk I/O error detected',
+                    'Transaction verification failed'
                 ]
             };
 
-            // Generate random log with smooth transitions
+            // Generate random log
             function generateLog() {
                 try {
                     var types = ['info', 'success', 'warning', 'error'];
@@ -744,7 +709,7 @@
                 }
             }
 
-            // Add new log with smooth animation
+            // Add new log
             function addLog() {
                 try {
                     if (!isRunning) return;
@@ -765,7 +730,7 @@
                 }
             }
 
-            // Update UI with smooth transitions
+            // Update UI
             function updateUI() {
                 try {
                     updateStatsWithAnimation();
@@ -839,7 +804,7 @@
                 }
             }
 
-            // Update log display with elite animations
+            // Update log display
             function updateLogDisplay() {
                 try {
                     var container = document.getElementById('logContainer');
@@ -853,7 +818,7 @@
                         if (emptyState) {
                             if (logs.length === 0) {
                                 emptyState.innerHTML = isRunning ? 
-                                    '<div class="loading-indicator mb-4" style="justify-content: center;"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div><div class="text-lg">Menunggu log engine masternode...</div><div class="text-sm text-slate-500 mt-2">Engine sedang memproses data secara real-time</div>' :
+                                    '<div class="text-lg">Menunggu log engine masternode...</div><div class="text-sm text-slate-500 mt-2">Engine sedang memproses data secara real-time</div>' :
                                     '<svg width="48" height="48" style="margin: 0 auto 16px; color: #64748b;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"></path></svg><div class="text-lg">Engine masternode dihentikan</div><div class="text-sm text-slate-500 mt-2">Klik "Start Engine" untuk memulai monitoring log</div>';
                             } else {
                                 emptyState.innerHTML = '<svg width="48" height="48" style="margin: 0 auto 16px; color: #64748b;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon></svg><div class="text-lg">Tidak ada log yang sesuai dengan filter "' + currentFilter + '"</div>';
@@ -877,13 +842,13 @@
                         var logClass = getLogClass(log.type);
                         var badgeClass = getBadgeClass(log.type);
                         
-                        logsHTML += '<div class="elite-log-entry ' + logClass + '" data-log-id="' + log.id + '">' +
+                        logsHTML += '<div class="clean-log-entry ' + logClass + '" data-log-id="' + log.id + '">' +
                             '<div class="flex items-center justify-between">' +
                                 '<div class="flex items-center space-x-3">' +
                                     '<span class="text-slate-400 text-xs font-mono">[' + log.timestamp + ']</span>' +
                                     '<span class="px-2 py-1 rounded-md text-xs font-medium ' + badgeClass + '">' + log.level + '</span>' +
                                 '</div>' +
-                                '<button onclick="copyLogEntry(' + log.id + ')" class="elite-btn" style="padding: 4px; background: rgba(71, 85, 105, 0.3); border-radius: 6px; transition: all 0.3s ease;">' +
+                                '<button onclick="copyLogEntry(' + log.id + ')" class="clean-btn" style="padding: 4px; background: rgba(71, 85, 105, 0.3); border-radius: 6px; transition: all 0.3s ease;">' +
                                     '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
                                         '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>' +
                                         '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>' +
@@ -902,7 +867,7 @@
                 }
             }
 
-            // Get elite log styling classes
+            // Get log styling classes
             function getLogClass(type) {
                 var styles = {
                     info: 'log-info',
@@ -937,29 +902,30 @@
                 }
             }
 
-            // Toggle engine with elite animations
+            // Toggle engine
             function toggleEngine() {
                 try {
                     isRunning = !isRunning;
                     var toggleBtn = document.getElementById('toggleButton');
                     var statusBadge = document.getElementById('statusBadge');
+                    var statusIndicator = statusBadge.querySelector('.status-indicator');
                     
                     if (!toggleBtn || !statusBadge) return;
                     
                     if (isRunning) {
                         toggleBtn.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: inline; margin-right: 6px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>Stop Engine';
-                        toggleBtn.className = 'elite-btn btn-danger';
+                        toggleBtn.className = 'clean-btn btn-danger';
                         statusBadge.innerHTML = '<span class="status-indicator"></span> Engine Running';
-                        statusBadge.className = 'elite-badge badge-success';
+                        statusBadge.className = 'clean-badge badge-success';
                         startLogGeneration();
-                        showEliteToast('Engine Masternode Dimulai', 'Log engine dimulai dan monitoring aktif');
+                        showCleanToast('Engine Masternode Dimulai', 'Log engine dimulai dan monitoring aktif');
                     } else {
                         toggleBtn.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: inline; margin-right: 6px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>Start Engine';
-                        toggleBtn.className = 'elite-btn btn-success';
-                        statusBadge.textContent = 'Engine Stopped';
-                        statusBadge.className = 'elite-badge badge-secondary';
+                        toggleBtn.className = 'clean-btn btn-success';
+                        statusBadge.innerHTML = '<span class="status-indicator inactive"></span> Engine Stopped';
+                        statusBadge.className = 'clean-badge badge-secondary';
                         stopLogGeneration();
-                        showEliteToast('Engine Masternode Dihentikan', 'Log engine telah dihentikan');
+                        showCleanToast('Engine Masternode Dihentikan', 'Log engine telah dihentikan');
                     }
                     
                     updateLogDisplay();
@@ -1008,7 +974,7 @@
                         
                         if (navigator.clipboard && navigator.clipboard.writeText) {
                             navigator.clipboard.writeText(logText).then(function() {
-                                showEliteToast('Log Entry Disalin', 'Log entry berhasil disalin ke clipboard');
+                                showCleanToast('Log Entry Disalin', 'Log entry berhasil disalin ke clipboard');
                             }).catch(function() {
                                 fallbackCopyTextToClipboard(logText);
                             });
@@ -1036,10 +1002,10 @@
                     try {
                         var successful = document.execCommand('copy');
                         if (successful) {
-                            showEliteToast('Log Entry Disalin', 'Log entry berhasil disalin ke clipboard');
+                            showCleanToast('Log Entry Disalin', 'Log entry berhasil disalin ke clipboard');
                         }
                     } catch (err) {
-                        showEliteToast('Error', 'Gagal menyalin log entry');
+                        showCleanToast('Error', 'Gagal menyalin log entry');
                     }
                     
                     document.body.removeChild(textArea);
@@ -1064,7 +1030,7 @@
                     
                     if (navigator.clipboard && navigator.clipboard.writeText) {
                         navigator.clipboard.writeText(logText).then(function() {
-                            showEliteToast('Log Berhasil Disalin', filteredLogs.length + ' log entries telah disalin ke clipboard');
+                            showCleanToast('Log Berhasil Disalin', filteredLogs.length + ' log entries telah disalin ke clipboard');
                         }).catch(function() {
                             fallbackCopyTextToClipboard(logText);
                         });
@@ -1095,27 +1061,27 @@
                         var url = URL.createObjectURL(blob);
                         var a = document.createElement('a');
                         a.href = url;
-                        a.download = 'masternode_logs_elite_' + new Date().toISOString().split('T')[0] + '.txt';
+                        a.download = 'masternode_logs_clean_' + new Date().toISOString().split('T')[0] + '.txt';
                         document.body.appendChild(a);
                         a.click();
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
                         
-                        showEliteToast('Log Berhasil Diekspor', filteredLogs.length + ' log entries telah diekspor ke file elite');
+                        showCleanToast('Log Berhasil Diekspor', filteredLogs.length + ' log entries telah diekspor ke file');
                     } catch (blobError) {
                         var dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(logText);
                         var downloadAnchorNode = document.createElement('a');
                         downloadAnchorNode.setAttribute("href", dataStr);
-                        downloadAnchorNode.setAttribute("download", 'masternode_logs_elite_' + new Date().toISOString().split('T')[0] + '.txt');
+                        downloadAnchorNode.setAttribute("download", 'masternode_logs_clean_' + new Date().toISOString().split('T')[0] + '.txt');
                         document.body.appendChild(downloadAnchorNode);
                         downloadAnchorNode.click();
                         document.body.removeChild(downloadAnchorNode);
                         
-                        showEliteToast('Log Berhasil Diekspor', filteredLogs.length + ' log entries telah diekspor ke file elite');
+                        showCleanToast('Log Berhasil Diekspor', filteredLogs.length + ' log entries telah diekspor ke file');
                     }
                 } catch (error) {
                     console.error('Error exporting logs:', error);
-                    showEliteToast('Error', 'Gagal mengekspor log');
+                    showCleanToast('Error', 'Gagal mengekspor log');
                 }
             }
 
@@ -1124,17 +1090,17 @@
                 try {
                     logs = [];
                     updateUI();
-                    showEliteToast('Log Dibersihkan', 'Semua log telah dihapus dari tampilan');
+                    showCleanToast('Log Dibersihkan', 'Semua log telah dihapus dari tampilan');
                 } catch (error) {
                     console.error('Error clearing logs:', error);
                 }
             }
 
-            // Elite toast notification
-            function showEliteToast(title, message) {
+            // Clean toast notification - No blinking
+            function showCleanToast(title, message) {
                 try {
                     var toast = document.createElement('div');
-                    toast.className = 'elite-toast';
+                    toast.className = 'clean-toast';
                     toast.innerHTML = '<div style="font-weight: 600; font-size: 16px;">' + title + '</div><div style="font-size: 14px; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">' + message + '</div>';
                     
                     document.body.appendChild(toast);
@@ -1166,7 +1132,7 @@
                 }
             }
 
-            // Initialize elite app
+            // Initialize clean app
             function init() {
                 try {
                     var toggleButton = document.getElementById('toggleButton');
@@ -1192,22 +1158,22 @@
                         filterSelect.addEventListener('change', handleFilterChange);
                     }
                     
-                    // Start elite experience
+                    // Start clean experience
                     startLogGeneration();
                     updateUI();
                     
                     // Welcome message
                     setTimeout(function() {
-                        showEliteToast('Elite Engine Started', 'Log Engine Masternode Elite Edition siap digunakan!');
+                        showCleanToast('Clean Engine Started', 'Log Engine Masternode Clean Edition siap digunakan!');
                     }, 1500);
                     
-                    console.log('Elite Log Engine Masternode initialized successfully');
+                    console.log('Clean Log Engine Masternode initialized successfully');
                 } catch (error) {
-                    console.error('Error initializing elite app:', error);
+                    console.error('Error initializing clean app:', error);
                 }
             }
 
-            // Start elite app when DOM is loaded
+            // Start clean app when DOM is loaded
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', init);
             } else {
