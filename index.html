@@ -1878,7 +1878,7 @@
                         <!-- Main Trading Area (Binance-like Grid) -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4" style="height: 90vh;">
                             <!-- Center: Large Chart -->
-                            <div class="exchange-card p-4 col-span-1 lg:col-span-2">
+                            <div class="exchange-card p-4 col-span-3" style="height: 50vh;">
                                 <h2 class="text-lg font-bold text-white mb-4 flex items-center">
                                     <i data-lucide="trending-up" class="w-5 h-5 mr-2 text-amber-400"></i>
                                     Price Chart
@@ -1887,26 +1887,13 @@
                                     <div id="tradingview-chart" class="h-full w-full"></div>
                                 </div>
                             </div>
-                            <!-- Right: Order Book + Trade Form -->
-                            <div class="exchange-card p-4 col-span-1">
+                            <!-- Order Book Buy (Left below chart) -->
+                            <div class="exchange-card p-4 col-span-1 lg:col-span-1.5">
                                 <h2 class="text-lg font-bold text-white mb-4 flex items-center">
                                     <i data-lucide="book-open" class="w-5 h-5 mr-2 text-amber-400"></i>
-                                    Order Book
+                                    Buy Orders
                                 </h2>
                                 <div class="order-book-section h-64 overflow-y-auto mb-4">
-                                    <h3>Sell Orders</h3>
-                                    <table class="w-full order-book">
-                                        <thead>
-                                            <tr>
-                                                <th>Price(USDT)</th>
-                                                <th>Amount</th>
-                                                <th>Total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="sell-orders" class="sell-order"></tbody>
-                                    </table>
-                                    <div id="spread">Spread: Loading...</div>
-                                    <h3>Buy Orders</h3>
                                     <table class="w-full order-book">
                                         <thead>
                                             <tr>
@@ -1918,16 +1905,57 @@
                                         <tbody id="buy-orders" class="buy-order"></tbody>
                                     </table>
                                 </div>
+                            </div>
+                            <!-- Order Book Sell (Right below chart) -->
+                            <div class="exchange-card p-4 col-span-1 lg:col-span-1.5">
+                                <h2 class="text-lg font-bold text-white mb-4 flex items-center">
+                                    <i data-lucide="book-open" class="w-5 h-5 mr-2 text-amber-400"></i>
+                                    Sell Orders
+                                </h2>
+                                <div class="order-book-section h-64 overflow-y-auto mb-4">
+                                    <table class="w-full order-book">
+                                        <thead>
+                                            <tr>
+                                                <th>Price(USDT)</th>
+                                                <th>Amount</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="sell-orders" class="sell-order"></tbody>
+                                    </table>
+                                </div>
+                                <div id="spread">Spread: Loading...</div>
+                            </div>
+                            <!-- Trade Section -->
+                            <div class="exchange-card p-4 col-span-3">
                                 <h2 class="text-lg font-bold text-white mb-4 flex items-center">
                                     <i data-lucide="shopping-cart" class="w-5 h-5 mr-2 text-amber-400"></i>
-                                    Trade (Demo)
+                                    Trade
                                 </h2>
-                                <div class="space-y-4">
-                                    <input id="trade-amount" type="number" placeholder="Amount" class="node-input" min="0" step="0.01" />
-                                    <input id="trade-price" type="number" placeholder="Price (Limit)" class="node-input" min="0" step="0.01" disabled />
-                                    <div class="flex space-x-4">
-                                        <button class="trade-button buy node-button flex-1" onclick="demoTrade('buy')">Buy</button>
-                                        <button class="trade-button sell node-button flex-1" onclick="demoTrade('sell')">Sell</button>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <!-- Buy Trade -->
+                                    <div class="space-y-4">
+                                        <select id="buy-order-type" class="node-input">
+                                            <option value="limit">Limit</option>
+                                            <option value="market">Market</option>
+                                        </select>
+                                        <input id="buy-amount" type="number" placeholder="Amount" class="node-input" min="0" step="0.01" />
+                                        <input id="buy-price" type="number" placeholder="Price (Limit)" class="node-input" min="0" step="0.01" />
+                                        <p class="text-sm text-gray-400">AVBL: <span id="buy-avbl">1000 USDT</span></p>
+                                        <p class="text-sm text-gray-400">Estimasi fee: 0.1 BossX</p>
+                                        <button class="trade-button buy node-button w-full" onclick="demoTrade('buy')">Buy</button>
+                                    </div>
+                                    <!-- Sell Trade -->
+                                    <div class="space-y-4">
+                                        <select id="sell-order-type" class="node-input">
+                                            <option value="limit">Limit</option>
+                                            <option value="market">Market</option>
+                                        </select>
+                                        <input id="sell-amount" type="number" placeholder="Amount" class="node-input" min="0" step="0.01" />
+                                        <input id="sell-price" type="number" placeholder="Price (Limit)" class="node-input" min="0" step="0.01" />
+                                        <p class="text-sm text-gray-400">AVBL: <span id="sell-avbl">1000 BossX</span></p>
+                                        <p class="text-sm text-gray-400">Estimasi fee: 0.1 BossX</p>
+                                        <button class="trade-button sell node-button w-full" onclick="demoTrade('sell')">Sell</button>
                                     </div>
                                 </div>
                             </div>
@@ -3236,6 +3264,26 @@
         }
         function demoTrade(type) {
             showSuccessMessage(`${type.toUpperCase()} order demo berhasil! (Tidak ada transaksi nyata)`);
+        }
+        // Tambahkan logic untuk order type
+        document.addEventListener('change', function(e) {
+            if (e.target.id === 'buy-order-type') {
+                document.getElementById('buy-price').disabled = e.target.value === 'market';
+            }
+            if (e.target.id === 'sell-order-type') {
+                document.getElementById('sell-price').disabled = e.target.value === 'market';
+            }
+        });
+        // Update AVBL
+        function updateAvbl() {
+            document.getElementById('buy-avbl').textContent = usdtBalance.toFixed(2) + ' USDT';
+            document.getElementById('sell-avbl').textContent = bossxBalance.toFixed(9) + ' BossX';
+        }
+        updateAvbl();
+        // Panggil updateAvbl saat balance berubah, misalnya di updateBalanceDisplays()
+        function updateBalanceDisplays() {
+            // ... kode existing ...
+            if (currentPage === 'exchange') updateAvbl();
         }
         // Event Listeners
         document.addEventListener('DOMContentLoaded', function() {
