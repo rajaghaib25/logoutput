@@ -909,8 +909,12 @@
         }
         /* Adjust chart container for larger size */
         #chart-container {
-            height: 90vh !important;
-            min-height: 600px;
+            height: 100% !important;
+            min-height: 300px;
+        }
+        #tradingview-chart {
+            height: 100%;
+            width: 100%;
         }
         /* Binance-like colors and fonts */
         body {
@@ -3247,7 +3251,7 @@
                 } else {
                     sidebar.classList.add('collapsed');
                     logoText.style.display = 'none';
-                    menuTexts.forEach(text => text.style.display = 'none');
+                    menuTexts.forEach(text => text.style.display = 'none';
                     toggleIcon.setAttribute('data-lucide', 'chevron-right');
                 }
                 lucide.createIcons();
