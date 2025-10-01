@@ -1885,6 +1885,7 @@
                                 </h2>
                                 <div id="chart-container" class="h-full w-full">
                                     <div id="tradingview-chart" class="h-full w-full"></div>
+                                    <canvas id="bossx-chart" style="display:none; height:100%; width:100%;"></canvas>
                                 </div>
                             </div>
                             <!-- Order Book Buy (Left below chart) -->
@@ -2360,6 +2361,7 @@
             // Update exchange balances
             document.getElementById('exchange-bossx-balance').textContent = bossxBalance.toFixed(9) + ' BossX';
             document.getElementById('exchange-usdt-balance').textContent = usdtBalance.toFixed(2) + ' USDT';
+            if (currentPage === 'exchange') updateAvbl();
         }
         function togglePower() {
             if (!isNodeActive) {
@@ -3052,6 +3054,8 @@
         }
         // Exchange Functions
         let currentSymbol = 'BTCUSDT'; // Default
+        let bossxChart = null;
+        const bossxDummyData = [{"x": "2025-09-01", "o": 0.000987, "h": 0.001083, "l": 0.000912, "c": 0.001014, "v": 154886}, {"x": "2025-09-02", "o": 0.001009, "h": 0.001028, "l": 0.000957, "c": 0.000981, "v": 291335}, {"x": "2025-09-03", "o": 0.001002, "h": 0.001014, "l": 0.000904, "c": 0.000995, "v": 876997}, {"x": "2025-09-04", "o": 0.000945, "h": 0.001045, "l": 0.00088, "c": 0.000981, "v": 358795}, {"x": "2025-09-05", "o": 0.000933, "h": 0.00099, "l": 0.000887, "c": 0.000892, "v": 627035}, {"x": "2025-09-06", "o": 0.000878, "h": 0.000929, "l": 0.000798, "c": 0.000824, "v": 419030}, {"x": "2025-09-07", "o": 0.000872, "h": 0.000924, "l": 0.000785, "c": 0.00088, "v": 356840}, {"x": "2025-09-08", "o": 0.000836, "h": 0.000932, "l": 0.000739, "c": 0.000895, "v": 831912}, {"x": "2025-09-09", "o": 0.000846, "h": 0.000877, "l": 0.000815, "c": 0.000857, "v": 672843}, {"x": "2025-09-10", "o": 0.000857, "h": 0.00087, "l": 0.000765, "c": 0.000792, "v": 824839}, {"x": "2025-09-11", "o": 0.000818, "h": 0.000866, "l": 0.000789, "c": 0.000833, "v": 371836}, {"x": "2025-09-12", "o": 0.00088, "h": 0.00096, "l": 0.000785, "c": 0.000941, "v": 635822}, {"x": "2025-09-13", "o": 0.0009, "h": 0.000928, "l": 0.000886, "c": 0.0009, "v": 123247}, {"x": "2025-09-14", "o": 0.000924, "h": 0.000983, "l": 0.000861, "c": 0.000979, "v": 532315}, {"x": "2025-09-15", "o": 0.000983, "h": 0.001006, "l": 0.000901, "c": 0.000909, "v": 402918}, {"x": "2025-09-16", "o": 0.000901, "h": 0.000946, "l": 0.000864, "c": 0.000866, "v": 580754}, {"x": "2025-09-17", "o": 0.000886, "h": 0.000962, "l": 0.000807, "c": 0.000818, "v": 388998}, {"x": "2025-09-18", "o": 0.000833, "h": 0.000926, "l": 0.000747, "c": 0.000827, "v": 938688}, {"x": "2025-09-19", "o": 0.000784, "h": 0.000822, "l": 0.000744, "c": 0.000801, "v": 556551}, {"x": "2025-09-20", "o": 0.000778, "h": 0.000839, "l": 0.000734, "c": 0.000836, "v": 258338}, {"x": "2025-09-21", "o": 0.000862, "h": 0.000922, "l": 0.000783, "c": 0.000852, "v": 219176}, {"x": "2025-09-22", "o": 0.000873, "h": 0.000893, "l": 0.000823, "c": 0.000837, "v": 150015}, {"x": "2025-09-23", "o": 0.000851, "h": 0.000889, "l": 0.000795, "c": 0.00088, "v": 205878}, {"x": "2025-09-24", "o": 0.000891, "h": 0.000949, "l": 0.000863, "c": 0.000944, "v": 961882}, {"x": "2025-09-25", "o": 0.000964, "h": 0.001053, "l": 0.000898, "c": 0.000944, "v": 209556}, {"x": "2025-09-26", "o": 0.000981, "h": 0.001063, "l": 0.000954, "c": 0.001051, "v": 252906}, {"x": "2025-09-27", "o": 0.001034, "h": 0.001055, "l": 0.000992, "c": 0.001049, "v": 785440}, {"x": "2025-09-28", "o": 0.001022, "h": 0.00107, "l": 0.000938, "c": 0.001052, "v": 599046}, {"x": "2025-09-29", "o": 0.001018, "h": 0.001076, "l": 0.000965, "c": 0.001042, "v": 637833}, {"x": "2025-09-30", "o": 0.001026, "h": 0.001121, "l": 0.000987, "c": 0.001056, "v": 693128}];
         function initExchangePage() {
             // Setup pair buttons
             document.querySelectorAll('.pair-button').forEach(btn => {
@@ -3059,7 +3063,7 @@
                     document.querySelectorAll('.pair-button').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     const pair = btn.dataset.pair;
-                    const symbol = pair === 'BossX/USDT' ? 'BTCUSDT' : pair.replace('/', '');
+                    const symbol = pair === 'BossX/USDT' ? 'BossXUSDT' : pair.replace('/', ''); // Ubah untuk BossX
                     currentSymbol = symbol;
                     loadChart(symbol);
                     loadMarketData(pair);
@@ -3069,7 +3073,7 @@
             });
             // Load default
             const defaultPair = 'BossX/USDT';
-            const defaultSymbol = 'BTCUSDT';
+            const defaultSymbol = 'BossXUSDT';
             document.querySelector(`[data-pair="${defaultPair}"]`).classList.add('active');
             currentSymbol = defaultSymbol;
             loadChart(defaultSymbol);
@@ -3079,27 +3083,105 @@
             updateBalanceDisplays(); // Ensure balances are shown
         }
         function loadChart(symbol) {
-            const chartContainer = document.getElementById('tradingview-chart');
-            chartContainer.innerHTML = ''; // Clear previous widget
-            new TradingView.widget({
-                "width": "100%",
-                "height": "100%",
-                "symbol": `BINANCE:${symbol}`,
-                "interval": "D",
-                "timezone": "Etc/UTC",
-                "theme": "dark",
-                "style": "1",
-                "locale": "en",
-                "toolbar_bg": "#f1f3f6",
-                "enable_publishing": false,
-                "allow_symbol_change": true,
-                "container_id": "tradingview-chart"
+            const tvChart = document.getElementById('tradingview-chart');
+            const bossxCanvas = document.getElementById('bossx-chart');
+            if (symbol === 'BossXUSDT') {
+                tvChart.style.display = 'none';
+                bossxCanvas.style.display = 'block';
+                initBossXChart();
+            } else {
+                tvChart.style.display = 'block';
+                bossxCanvas.style.display = 'none';
+                tvChart.innerHTML = ''; // Clear previous widget
+                new TradingView.widget({
+                    "width": "100%",
+                    "height": "100%",
+                    "symbol": `BINANCE:${symbol}`,
+                    "interval": "D",
+                    "timezone": "Etc/UTC",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "en",
+                    "toolbar_bg": "#f1f3f6",
+                    "enable_publishing": false,
+                    "allow_symbol_change": true,
+                    "container_id": "tradingview-chart"
+                });
+            }
+        }
+        function initBossXChart() {
+            if (bossxChart) bossxChart.destroy();
+            const ctx = document.getElementById('bossx-chart').getContext('2d');
+            const chartData = {
+                labels: bossxDummyData.map(d => d.x),
+                datasets: [{
+                    label: 'BossX/USDT',
+                    data: bossxDummyData.map(d => ({
+                        x: d.x,
+                        o: d.o,
+                        h: d.h,
+                        l: d.l,
+                        c: d.c
+                    })),
+                    type: 'candlestick',
+                    borderColor: '#00ff00',
+                    color: {
+                        up: '#26a69a',
+                        down: '#f45567',
+                        unchanged: '#999'
+                    }
+                }]
+            };
+            bossxChart = new Chart(ctx, {
+                type: 'candlestick',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            },
+                            ticks: {
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: '#333'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: '#333'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    }
+                }
             });
         }
         function loadMarketData(pair) {
             if (pair === 'BossX/USDT') {
-                // Dummy data for BossX
-                updateMarketData(0.001, '+5.2%', 1000000, '0.0012 / 0.0009');
+                // Calculate from dummy data
+                const lastData = bossxDummyData[bossxDummyData.length - 1];
+                const firstData = bossxDummyData[0];
+                const price = lastData.c;
+                const change = ((lastData.c - firstData.o) / firstData.o * 100).toFixed(2);
+                const changeSign = change > 0 ? '+' : '';
+                const volume = bossxDummyData.reduce((sum, d) => sum + d.v, 0);
+                const high = Math.max(...bossxDummyData.map(d => d.h));
+                const low = Math.min(...bossxDummyData.map(d => d.l));
+                updateMarketData(price, `${changeSign}${change}%`, volume, `${high.toFixed(6)} / ${low.toFixed(6)}`);
                 return;
             }
             const symbol = pair.replace('/', '');
@@ -3125,7 +3207,7 @@
                 });
         }
         function updateMarketData(price, change, volume, highlow) {
-            document.getElementById('current-price').textContent = `$${price.toLocaleString()}`;
+            document.getElementById('current-price').textContent = `$${price.toLocaleString(undefined, {minimumFractionDigits: 6})}`;
             document.getElementById('price-change').textContent = change;
             document.getElementById('volume').textContent = `$${volume.toLocaleString()}`;
             document.getElementById('high-low').textContent = highlow;
@@ -3133,7 +3215,10 @@
         // Order Book Functions
         function loadOrderBook(symbol) {
             if (ws) ws.close();
-            if (symbol === 'BTCUSDT') { // Dummy for BossX, use BTC for others
+            if (symbol === 'BossXUSDT') {
+                // Dummy for BossX
+                generateDummyOrderBook();
+            } else {
                 ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@depth@100ms`);
                 ws.onmessage = function(event) {
                     const data = JSON.parse(event.data);
@@ -3144,9 +3229,6 @@
                     // Fallback to REST
                     fetchOrderBook(symbol);
                 };
-            } else {
-                // For BossX, use dummy
-                generateDummyOrderBook();
             }
         }
         function fetchOrderBook(symbol) {
@@ -3263,7 +3345,7 @@
             if (tradesBody.children.length > 50) tradesBody.removeChild(tradesBody.lastChild);
         }
         function demoTrade(type) {
-            showSuccessMessage(`${type.toUpperCase()} order demo berhasil! (Tidak ada transaksi nyata)`);
+            showSuccessMessage(`${type.toUpperCase()} order berhasil! (Demo)`);
         }
         // Tambahkan logic untuk order type
         document.addEventListener('change', function(e) {
@@ -3280,11 +3362,6 @@
             document.getElementById('sell-avbl').textContent = bossxBalance.toFixed(9) + ' BossX';
         }
         updateAvbl();
-        // Panggil updateAvbl saat balance berubah, misalnya di updateBalanceDisplays()
-        function updateBalanceDisplays() {
-            // ... kode existing ...
-            if (currentPage === 'exchange') updateAvbl();
-        }
         // Event Listeners
         document.addEventListener('DOMContentLoaded', function() {
             // Sidebar toggle
