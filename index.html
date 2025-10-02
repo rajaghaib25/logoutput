@@ -429,9 +429,9 @@
             color: #9ca3af;
         }
         .node-input:disabled {
-            background: rgba(31, 41, 55, 0.3);
+            background: rgba(31, 41, 55, 0.6);
             border-color: #4b5563;
-            color: #6b7280;
+            color: #9ca3af;
             cursor: not-allowed;
         }
         /* Button styles */
@@ -741,7 +741,9 @@
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
             margin-bottom: 1rem;
             display: block;
-            width: 100%;
+            min-width: 100px;
+            flex-shrink: 0;
+            width: auto;
         }
         .pair-button:hover {
             background: linear-gradient(145deg, #d97706, #b45309);
@@ -773,6 +775,9 @@
             border-radius: 0.75rem;
             padding: 1rem;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
         }
         .trade-button.buy {
             background: linear-gradient(145deg, #10b981, #059669);
@@ -850,8 +855,10 @@
         }
         /* Order Book Styles */
         .order-book-section {
-            height: 500px;
+            height: auto;
+            max-height: 300px;
             overflow-y: auto;
+            scrollbar-width: thin;
         }
         .order-book-item {
             display: flex;
@@ -862,6 +869,7 @@
         }
         .order-book-item:hover {
             background: rgba(245, 158, 11, 0.05);
+            transition: background 0.3s ease;
         }
         .order-book-buy {
             color: #10b981;
@@ -883,6 +891,12 @@
             padding: 0.5rem;
             border-bottom: 1px solid rgba(55, 65, 81, 0.5);
             text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .order-book table {
+            width: 100%;
+            table-layout: fixed;
         }
         .buy-order {
             color: #26a69a; /* Binance green */
@@ -910,7 +924,7 @@
         /* Adjust chart container for larger size */
         #chart-container {
             height: 100% !important;
-            min-height: 300px;
+            min-height: 400px;
         }
         #tradingview-chart {
             height: 100%;
@@ -932,7 +946,25 @@
             text-align: center;
             margin: 10px 0;
             font-size: 18px;
-            color: #ff6b6b;
+            color: #f59e0b;
+        }
+        .skeleton-loading {
+            animation: pulse 1.5s infinite;
+        }
+        @media (max-width: 768px) {
+            .order-book-section {
+                max-height: 200px;
+            }
+            .pair-button {
+                padding: 0.5rem 1rem;
+            }
+            .market-data {
+                grid-template-columns: repeat(2, 1fr);
+                text-align: center;
+            }
+            .grid-cols-2 {
+                grid-cols-1;
+            }
         }
     </style>
 </head>
@@ -1842,14 +1874,14 @@
                         <div class="exchange-card p-4 mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div>
                                 <h2 class="text-lg font-bold text-white mb-2">Trading Pairs</h2>
-                                <div class="flex flex-row gap-2 overflow-x-auto">
+                                <div class="flex flex-row flex-wrap gap-2 overflow-x-auto">
                                     <button class="pair-button active" data-pair="BossX/USDT">BossX/USDT</button>
                                     <button class="pair-button" data-pair="BTC/USDT">BTC/USDT</button>
                                     <button class="pair-button" data-pair="ETH/USDT">ETH/USDT</button>
                                     <button class="pair-button" data-pair="SOL/USDT">SOL/USDT</button>
                                 </div>
                             </div>
-                            <div class="market-data grid grid-cols-2 md:grid-cols-4 gap-4 w-full md:w-auto">
+                            <div class="market-data w-full md:w-auto">
                                 <div>
                                     <p class="text-gray-400 text-sm">Price</p>
                                     <p id="current-price" class="text-lg font-bold text-white">$0.00</p>
@@ -1871,7 +1903,7 @@
                         <!-- Main Trading Area (Binance-like Grid) -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4" style="height: 90vh;">
                             <!-- Center: Large Chart -->
-                            <div class="exchange-card p-4 col-span-3" style="height: 50vh;">
+                            <div class="exchange-card p-4 col-span-3">
                                 <h2 class="text-lg font-bold text-white mb-4 flex items-center">
                                     <i data-lucide="trending-up" class="w-5 h-5 mr-2 text-amber-400"></i>
                                     Price Chart
@@ -1886,7 +1918,7 @@
                                     <i data-lucide="book-open" class="w-5 h-5 mr-2 text-amber-400"></i>
                                     Buy Orders
                                 </h2>
-                                <div class="order-book-section h-64 overflow-y-auto mb-4">
+                                <div class="order-book-section mb-4">
                                     <table class="w-full order-book">
                                         <thead>
                                             <tr>
@@ -1895,7 +1927,10 @@
                                                 <th>Total</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="buy-orders" class="buy-order"></tbody>
+                                        <tbody id="buy-orders" class="buy-order">
+                                            <tr class="skeleton-loading"><td colspan="3" class="h-4 bg-gray-700 rounded"></td></tr>
+                                            <tr class="skeleton-loading"><td colspan="3" class="h-4 bg-gray-700 rounded"></td></tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -1905,7 +1940,7 @@
                                     <i data-lucide="book-open" class="w-5 h-5 mr-2 text-amber-400"></i>
                                     Sell Orders
                                 </h2>
-                                <div class="order-book-section h-64 overflow-y-auto mb-4">
+                                <div class="order-book-section mb-4">
                                     <table class="w-full order-book">
                                         <thead>
                                             <tr>
@@ -1914,7 +1949,10 @@
                                                 <th>Total</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="sell-orders" class="sell-order"></tbody>
+                                        <tbody id="sell-orders" class="sell-order">
+                                            <tr class="skeleton-loading"><td colspan="3" class="h-4 bg-gray-700 rounded"></td></tr>
+                                            <tr class="skeleton-loading"><td colspan="3" class="h-4 bg-gray-700 rounded"></td></tr>
+                                        </tbody>
                                     </table>
                                 </div>
                                 <div id="spread">Spread: Loading...</div>
@@ -3053,7 +3091,7 @@
                     const symbol = pair.replace('/', '');
                     currentSymbol = symbol;
                     loadChart(symbol);
-                    loadMarketData(pair);
+                    debouncedLoadMarketData(pair);
                     loadOrderBook(symbol);
                     loadRecentTrades(symbol);
                 });
@@ -3064,7 +3102,7 @@
             document.querySelector(`[data-pair="${defaultPair}"]`).classList.add('active');
             currentSymbol = defaultSymbol;
             loadChart(defaultSymbol);
-            loadMarketData(defaultPair);
+            debouncedLoadMarketData(defaultPair);
             loadOrderBook(defaultSymbol);
             loadRecentTrades(defaultSymbol);
             updateBalanceDisplays(); // Ensure balances are shown
@@ -3087,6 +3125,14 @@
                 "container_id": "tradingview-chart"
             });
         }
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+        const debouncedLoadMarketData = debounce(loadMarketData, 300);
         function loadMarketData(pair) {
             const symbol = pair.replace('/', '');
             fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`)
@@ -3103,11 +3149,13 @@
                     // Update color class
                     const priceChangeEl = document.getElementById('price-change');
                     priceChangeEl.className = `text-xl font-bold ${changeColor}`;
+                    localStorage.setItem('marketData', JSON.stringify(data)); // Cache
                 })
                 .catch(err => {
                     console.error('Error fetching market data:', err);
-                    // Fallback dummy data
-                    updateMarketData(0, '+0.00%', 0, '$0.00 / $0.00');
+                    const cachedData = JSON.parse(localStorage.getItem('marketData')) || {};
+                    updateMarketData(cachedData.lastPrice || 0, cachedData.priceChangePercent || '+0.00%', cachedData.quoteVolume || 0, `${cachedData.highPrice || 0} / ${cachedData.lowPrice || 0}`);
+                    showErrorMessage('Gagal load data market. Menggunakan data cache.');
                 });
         }
         function updateMarketData(price, change, volume, highlow) {
@@ -3126,7 +3174,7 @@
             };
             ws.onerror = function(error) {
                 console.error('WebSocket error:', error);
-                // Fallback to REST
+                showErrorMessage('Koneksi data real-time gagal. Menggunakan data cache.');
                 fetchOrderBook(symbol);
             };
         }
@@ -3141,57 +3189,60 @@
         let asks = []; // For spread calculation
         let bids = []; // For spread calculation
         function updateOrderBook(data) {
-            // Update global asks and bids for spread
-            asks = data.a || data.asks;
-            bids = data.b || data.bids;
-            // Enhanced with depth bars
-            const maxVolume = Math.max(...asks.map(a => parseFloat(a[1])), ...bids.map(b => parseFloat(b[1])));
-            // Sells (asks) on top, highest price first (reverse asks since they are low to high)
-            const sellOrders = document.getElementById('sell-orders');
-            sellOrders.innerHTML = '';
-            asks.slice(0, 20).reverse().forEach(ask => {
-                const price = parseFloat(ask[0]).toFixed(2);
-                const amount = parseFloat(ask[1]).toFixed(6);
-                const total = (parseFloat(ask[0]) * parseFloat(ask[1])).toFixed(2);
-                const width = (parseFloat(ask[1]) / maxVolume * 100) + '%';
-                const row = document.createElement('tr');
-                row.className = 'relative';
-                row.innerHTML = `
-                    <td class="sell-order">${price}</td>
-                    <td>${amount}</td>
-                    <td>${total}</td>
-                    <div class="depth-bar sell-depth" style="width: ${width};"></div>
-                `;
-                sellOrders.appendChild(row);
+            requestAnimationFrame(() => {
+                // Update global asks and bids for spread
+                asks = data.a || data.asks;
+                bids = data.b || data.bids;
+                // Clear skeleton
+                document.getElementById('buy-orders').innerHTML = '';
+                document.getElementById('sell-orders').innerHTML = '';
+                // Enhanced with depth bars
+                const maxVolume = Math.max(...asks.map(a => parseFloat(a[1])), ...bids.map(b => parseFloat(b[1])));
+                // Sells (asks) on top, highest price first (reverse asks since they are low to high)
+                const sellOrders = document.getElementById('sell-orders');
+                asks.slice(0, 20).reverse().forEach(ask => {
+                    const price = parseFloat(ask[0]).toFixed(2);
+                    const amount = parseFloat(ask[1]).toFixed(6);
+                    const total = (parseFloat(ask[0]) * parseFloat(ask[1])).toFixed(2);
+                    const width = (parseFloat(ask[1]) / maxVolume * 100) + '%';
+                    const row = document.createElement('tr');
+                    row.className = 'relative';
+                    row.innerHTML = `
+                        <td class="sell-order">${price}</td>
+                        <td>${amount}</td>
+                        <td>${total}</td>
+                        <div class="depth-bar sell-depth" style="width: ${width};"></div>
+                    `;
+                    sellOrders.appendChild(row);
+                });
+                // Buys (bids) below, highest first (bids are high to low)
+                const buyOrders = document.getElementById('buy-orders');
+                bids.slice(0, 20).forEach(bid => {
+                    const price = parseFloat(bid[0]).toFixed(2);
+                    const amount = parseFloat(bid[1]).toFixed(6);
+                    const total = (parseFloat(bid[0]) * parseFloat(bid[1])).toFixed(2);
+                    const width = (parseFloat(bid[1]) / maxVolume * 100) + '%';
+                    const row = document.createElement('tr');
+                    row.className = 'relative';
+                    row.innerHTML = `
+                        <td class="buy-order">${price}</td>
+                        <td>${amount}</td>
+                        <td>${total}</td>
+                        <div class="depth-bar buy-depth" style="width: ${width};"></div>
+                    `;
+                    buyOrders.appendChild(row);
+                });
+                // Update spread
+                if (asks.length > 0 && bids.length > 0) {
+                    const bestBid = parseFloat(bids[0][0]);
+                    const bestAsk = parseFloat(asks[0][0]);
+                    const spreadValue = (bestAsk - bestBid).toFixed(2);
+                    const spreadPercent = ((bestAsk - bestBid) / bestBid * 100).toFixed(2);
+                    document.getElementById('spread').textContent = `Spread: ${spreadValue} (${spreadPercent}%)`;
+                } else {
+                    document.getElementById('spread').textContent = 'Spread: Loading...';
+                }
             });
-            // Buys (bids) below, highest first (bids are high to low)
-            const buyOrders = document.getElementById('buy-orders');
-            buyOrders.innerHTML = '';
-            bids.slice(0, 20).forEach(bid => {
-                const price = parseFloat(bid[0]).toFixed(2);
-                const amount = parseFloat(bid[1]).toFixed(6);
-                const total = (parseFloat(bid[0]) * parseFloat(bid[1])).toFixed(2);
-                const width = (parseFloat(bid[1]) / maxVolume * 100) + '%';
-                const row = document.createElement('tr');
-                row.className = 'relative';
-                row.innerHTML = `
-                    <td class="buy-order">${price}</td>
-                    <td>${amount}</td>
-                    <td>${total}</td>
-                    <div class="depth-bar buy-depth" style="width: ${width};"></div>
-                `;
-                buyOrders.appendChild(row);
-            });
-            // Update spread
-            if (asks.length > 0 && bids.length > 0) {
-                const bestBid = parseFloat(bids[0][0]);
-                const bestAsk = parseFloat(asks[0][0]);
-                const spreadValue = (bestAsk - bestBid).toFixed(2);
-                const spreadPercent = ((bestAsk - bestBid) / bestBid * 100).toFixed(2);
-                document.getElementById('spread').textContent = `Spread: ${spreadValue} (${spreadPercent}%)`;
-            } else {
-                document.getElementById('spread').textContent = 'Spread: Loading...';
-            }
         }
         function loadRecentTrades(symbol) {
             const wsTrades = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@trade`);
@@ -3218,10 +3269,14 @@
         // Tambahkan logic untuk order type
         document.addEventListener('change', function(e) {
             if (e.target.id === 'buy-order-type') {
-                document.getElementById('buy-price').disabled = e.target.value === 'market';
+                const priceInput = document.getElementById('buy-price');
+                priceInput.style.display = e.target.value === 'market' ? 'none' : 'block';
+                priceInput.title = e.target.value === 'market' ? 'Harga otomatis untuk market order' : '';
             }
             if (e.target.id === 'sell-order-type') {
-                document.getElementById('sell-price').disabled = e.target.value === 'market';
+                const priceInput = document.getElementById('sell-price');
+                priceInput.style.display = e.target.value === 'market' ? 'none' : 'block';
+                priceInput.title = e.target.value === 'market' ? 'Harga otomatis untuk market order' : '';
             }
         });
         // Update AVBL
@@ -3230,11 +3285,6 @@
             document.getElementById('sell-avbl').textContent = bossxBalance.toFixed(9) + ' BossX';
         }
         updateAvbl();
-        // Panggil updateAvbl saat balance berubah, misalnya di updateBalanceDisplays()
-        function updateBalanceDisplays() {
-            // ... kode existing ...
-            if (currentPage === 'exchange') updateAvbl();
-        }
         // Event Listeners
         document.addEventListener('DOMContentLoaded', function() {
             // Sidebar toggle
@@ -3251,7 +3301,7 @@
                 } else {
                     sidebar.classList.add('collapsed');
                     logoText.style.display = 'none';
-                    menuTexts.forEach(text => text.style.display = 'none';
+                    menuTexts.forEach(text => text.style.display = 'none');
                     toggleIcon.setAttribute('data-lucide', 'chevron-right');
                 }
                 lucide.createIcons();
